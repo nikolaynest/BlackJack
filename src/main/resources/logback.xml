@@ -1,0 +1,84 @@
+<configuration
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.github.com/enricopulatzo/logback-XSD/master/src/main/xsd/logback.xsd">
+
+    <contextName>railway_basket</contextName>
+
+    <JmxConfigurator/>
+
+    <if condition='isNull("log.dir")'>
+        <then>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%level] [%logger{0}] %msg%n</pattern>
+                </layout>
+            </appender>
+            <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+                <queueSize>1024</queueSize>
+                <appender-ref ref="STDOUT"/>
+            </appender>
+
+            <logger name="org.springframework.jdbc.core.JdbcTemplate" level="DEBUG" additivity="false">
+                <appender-ref ref="ASYNC"/>
+            </logger>
+
+            <logger name="com.exam.blackjack" level="DEBUG" additivity="false">
+                <appender-ref ref="ASYNC"/>
+            </logger>
+
+        </then>
+
+        <else>
+            <appender name="BlackJack" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <append>true</append>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${log.dir}/black_jack_%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+                    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <maxFileSize>100MB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%level] [%logger{0}] %msg%n</pattern>
+                </encoder>
+            </appender>
+            <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+                <queueSize>1024</queueSize>
+                <appender-ref ref="BlackJack"/>
+            </appender>
+
+            <appender name="FILE_ERROR_APPENDER" class="ch.qos.logback.core.FileAppender">
+                <append>true</append>
+
+                <encoder>
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%logger{0}] %msg%n</pattern>
+                </encoder>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>ERROR</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${log.dir}/railway_basket_error-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+                    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <maxFileSize>100MB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
+                <file>${log.dir}/black_jack_error.log</file>
+            </appender>
+
+            <logger name="com.exam.blackjack" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE_ERROR_APPENDER"/>
+                <appender-ref ref="ASYNC"/>
+            </logger>
+
+            <logger name="org.springframework.jdbc.core.JdbcTemplate" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE_ERROR_APPENDER"/>
+                <appender-ref ref="ASYNC"/>
+            </logger>
+
+        </else>
+    </if>
+
+</configuration>
+
