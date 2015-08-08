@@ -6,8 +6,10 @@ import com.exam.blackjack.core.CoreManager;
 import com.exam.blackjack.deck.DeckOperations;
 import com.exam.blackjack.rest.container.request.AccountRequest;
 import com.exam.blackjack.rest.container.request.ParlayRequest;
+import com.exam.blackjack.rest.container.request.RechargeRequest;
 import com.exam.blackjack.rest.container.response.AccountResponse;
 import com.exam.blackjack.rest.container.response.DealCardsResponse;
+import com.exam.blackjack.rest.container.response.RechargeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +50,11 @@ public class AppController {
     @RequestMapping(value = "/account", method = POST)
     public AccountResponse accountAccess(@RequestBody AccountRequest request) {
         return manager.getAccount(request);
+    }
+
+    @RequestMapping(value = "/recharge", method = POST)
+    public RechargeResponse rechargeBalanse(@RequestBody RechargeRequest request) {
+        return manager.recharge(request);
     }
 
     @RequestMapping(value = "/parlay", method = POST)

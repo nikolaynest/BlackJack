@@ -16,9 +16,9 @@ public class DealCardsResponse {
     private List<CardOwner> playerCards;
     private List<CardOwner> dillerCards;
 
-    @XmlElementWrapper(name = "dillerCards")
-    @XmlElement(name = "dillerCard")
-    @JsonProperty(value = "dillerCard")
+    @XmlElementWrapper(name = "dealerCards")
+    @XmlElement(name = "dealerCard")
+    @JsonProperty(value = "dealerCard")
     public List<CardOwner> getDillerCards() {
         return dillerCards;
     }
