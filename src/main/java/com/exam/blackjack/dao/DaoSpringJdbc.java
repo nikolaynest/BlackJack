@@ -1,9 +1,9 @@
 package com.exam.blackjack.dao;
 
-import com.exam.blackjack.rest.container.request.AccountRequest;
+import com.exam.blackjack.rest.container.request.BustRequest;
 import com.exam.blackjack.rest.container.request.RechargeRequest;
 import com.exam.blackjack.rest.container.response.AccountResponse;
-import com.exam.blackjack.rest.container.response.RechargeResponse;
+import com.exam.blackjack.rest.container.response.AvailableCashResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,8 @@ public class DaoSpringJdbc implements DAO {
     }
 
     @Override
-    public AccountResponse getAccount(AccountRequest request) {
-        log.info("getAccount: request id:[{}]", request.getAccountId());
-        Long accountId = request.getAccountId();
+    public AccountResponse getAccount(long accountId) {
+        log.info("getAccount: request id:[{}]", accountId);
         String query = "SELECT * FROM account WHERE account_id = ?";
         log.info("SQL: [{}]", query);
         AccountResponse response = jdbcTemplate.queryForObject(query, new Object[]{accountId}, new AccountRowMapper());
@@ -42,14 +41,14 @@ public class DaoSpringJdbc implements DAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RechargeResponse recharge(RechargeRequest request) {
-        int amount = request.getRechargeCash();
-        int accountId = request.getAccountId();
+    public AvailableCashResponse recharge(RechargeRequest request) {
+        Double amount = request.getRechargeCash();
+        long accountId = request.getAccountId();
         this.rechargeAccount(request);
         this.recordOperation(amount, request);
         String query = "SELECT * FROM account WHERE account_id = ?";
         AccountResponse accountInfo = jdbcTemplate.queryForObject(query, new Object[]{accountId}, new AccountRowMapper());
-        RechargeResponse response = new RechargeResponse();
+        AvailableCashResponse response = new AvailableCashResponse();
         response.setAvailableCash(accountInfo.getCash());
         response.setAccountId(accountId);
         return response;
@@ -57,18 +56,29 @@ public class DaoSpringJdbc implements DAO {
 
     private void rechargeAccount(RechargeRequest request) {
         String sql = "UPDATE account SET cash = cash + ? where account_id = ?";
-        Integer cash = request.getRechargeCash();
-        Integer accountId = request.getAccountId();
+        Double cash = request.getRechargeCash();
+        long accountId = request.getAccountId();
         int row = jdbcTemplate.update(sql, cash, accountId);
         log.info(sql + " cash = [{}], id = [{}], changes [{}] rows number", cash, accountId, row);
     }
 
-    private void recordOperation(int amount, RechargeRequest request) {
-        int accountId = request.getAccountId();
+    private void recordOperation(double amount, RechargeRequest request) {
+        long accountId = request.getAccountId();
         String insert = "INSERT INTO account_operation (amount, account_id, operation_id) values (?,?,?)";
         jdbcTemplate.update(insert, amount, accountId, RECHARGE_BALANCE_OPERATION_NUMBER);
         log.info("update account_operation with amount:[{}] for accountId:[{}]", amount, accountId);
     }
 
+    @Transactional
+    public AvailableCashResponse subtraction(BustRequest request) {
+        Integer moneyRate = request.getMoneyRate();
+        Long fromWhomId = request.getFromWhomId();
+        Long toWhomId = request.getToWhomId();
+
+        String subtractionQuery = "UPDATE account SET cash = cash - ? where account_id = ?";
+        int row = jdbcTemplate.update(subtractionQuery, moneyRate, fromWhomId);
+        return null;
+
+    }
 
 }

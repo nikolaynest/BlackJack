@@ -5,32 +5,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Created by nikolay on 03.08.15.
- */
-@XmlRootElement(name = "available")
-public class RechargeResponse {
+@XmlRootElement(name = "response")
+public class AvailableCashResponse {
 
-    private Integer availableCash;
-    private Integer accountId;
+    private Double availableCash;
+    private Long accountId;
 
     @XmlElement(name = "cash")
     @JsonProperty("cash")
-    public Integer getAvailableCash() {
+    public Double getAvailableCash() {
         return availableCash;
     }
 
-    public void setAvailableCash(Integer availableCash) {
+    public void setAvailableCash(Double availableCash) {
         this.availableCash = availableCash;
     }
 
     @XmlElement(name = "accountId")
     @JsonProperty("accountId")
-    public Integer getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Integer accountId) {
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
 }

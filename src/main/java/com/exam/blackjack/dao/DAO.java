@@ -1,15 +1,17 @@
 package com.exam.blackjack.dao;
 
-import com.exam.blackjack.rest.container.request.AccountRequest;
+import com.exam.blackjack.rest.container.request.BustRequest;
 import com.exam.blackjack.rest.container.request.RechargeRequest;
 import com.exam.blackjack.rest.container.response.AccountResponse;
-import com.exam.blackjack.rest.container.response.RechargeResponse;
+import com.exam.blackjack.rest.container.response.AvailableCashResponse;
 
 /**
  * Created by nikolay on 02.08.15.
  */
 public interface DAO {
-    AccountResponse getAccount(AccountRequest request);
+    AccountResponse getAccount(long accountId);
 
-    RechargeResponse recharge(RechargeRequest request);
+    AvailableCashResponse recharge(RechargeRequest request);
+
+    AvailableCashResponse subtraction(BustRequest request);
 }

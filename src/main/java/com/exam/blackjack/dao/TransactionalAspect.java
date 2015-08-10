@@ -20,19 +20,4 @@ public class TransactionalAspect {
         log.debug("Exception during db operation: [{}]", e.toString());
         throw new RuntimeException(e);
     }
-
-//    @AfterThrowing(pointcut = "execution(* *..DAOI.*(..))", throwing = "e")
-//    public void handleExceptionThrowing(RuntimeException e) {
-//        if (e instanceof DataProcessingException) {
-//            throw e;
-//        }
-//        if (e.getCause() instanceof SQLException) {
-//            SQLException sqlException = (SQLException) e.getCause();
-//            throw new DataProcessingException(sqlException.getMessage(), sqlException);
-//        }
-//        if (e instanceof DataAccessException) {
-//            throw new DataProcessingException(e);
-//        }
-//        throw new BasketException(e);
-//    }
 }

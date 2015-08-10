@@ -1,28 +1,19 @@
-package com.exam.blackjack.rest.container.request;
+package com.exam.blackjack.rest.container.response;
 
+import com.exam.blackjack.card.Card;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by nikolay on 25.07.15.
+ * Created on 10.08.15.
  */
-@XmlRootElement(name = "request")
-public class ParlayRequest {
+@XmlRootElement(name = "response")
+public class HitResponse {
 
-    private Integer moneyRate;
     private Long accountId;
-
-    @XmlElement(name = "money")
-    @JsonProperty("money")
-    public Integer getMoneyRate() {
-        return moneyRate;
-    }
-
-    public void setMoneyRate(Integer moneyRate) {
-        this.moneyRate = moneyRate;
-    }
+    private Card card;
 
     @XmlElement(name = "accountId")
     @JsonProperty("accountId")
@@ -32,5 +23,15 @@ public class ParlayRequest {
 
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
+    }
+
+    @XmlElement(name = "card")
+    @JsonProperty("card")
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
     }
 }

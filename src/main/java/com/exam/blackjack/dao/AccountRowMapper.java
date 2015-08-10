@@ -15,7 +15,7 @@ public class AccountRowMapper implements RowMapper<AccountResponse> {
         AccountResponse response = new AccountResponse();
         response.setAccountId(rs.getLong("account_id"));
         response.setName(rs.getString("name"));
-        response.setCash(rs.getInt("cash"));
+        response.setCash(rs.getDouble("cash"));
         return response;
     }
 }

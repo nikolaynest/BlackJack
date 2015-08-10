@@ -13,7 +13,7 @@ public class AccountResponse {
 
     private Long accountId;
     private String name;
-    private Integer cash;
+    private Double cash;
 
     @XmlElement(name = "accountId")
     @JsonProperty("accountId")
@@ -37,11 +37,11 @@ public class AccountResponse {
 
     @XmlElement(name = "cash")
     @JsonProperty("cash")
-    public Integer getCash() {
+    public Double getCash() {
         return cash;
     }
 
-    public void setCash(Integer cash) {
+    public void setCash(Double cash) {
         this.cash = cash;
     }
 }

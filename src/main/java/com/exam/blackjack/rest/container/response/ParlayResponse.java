@@ -9,10 +9,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
- * Created by nikolay on 25.07.15.
+ * Created on 25.07.15.
  */
-@XmlRootElement(name = "dealResponse")
-public class DealCardsResponse {
+@XmlRootElement(name = "response")
+public class ParlayResponse {
     private List<CardOwner> playerCards;
     private List<CardOwner> dillerCards;
 

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by nikolay on 21.07.15.
+ * Created on 21.07.15.
  */
 public class DeckOperations implements Shuffle {
 

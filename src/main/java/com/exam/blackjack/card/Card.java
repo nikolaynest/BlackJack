@@ -1,11 +1,12 @@
 package com.exam.blackjack.card;
 
 import javax.xml.bind.annotation.XmlElement;
+import java.io.Serializable;
 
 /**
- * Created by nikolay on 20.07.15.
+ * Created on 20.07.15.
  */
-public class Card {
+public class Card implements Serializable {
 
     private Suit suit;
     private Rank rank;

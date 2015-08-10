@@ -3,7 +3,7 @@ package com.exam.blackjack.config;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
- * Created by nikolay on 25.07.15.
+ * Created on 25.07.15.
  */
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     private static final String CONTEXT = "/*";

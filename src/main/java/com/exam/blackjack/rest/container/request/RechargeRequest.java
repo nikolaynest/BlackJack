@@ -6,31 +6,31 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by nikolay on 03.08.15.
+ * Created on 03.08.15.
  */
-@XmlRootElement(name = "recharge")
+@XmlRootElement(name = "request")
 public class RechargeRequest {
 
-    private Integer rechargeCash;
-    private Integer accountId;
+    private Double rechargeCash;
+    private Long accountId;
 
     @XmlElement(name = "cash")
     @JsonProperty("cash")
-    public Integer getRechargeCash() {
+    public Double getRechargeCash() {
         return rechargeCash;
     }
 
-    public void setRechargeCash(Integer rechargeCash) {
+    public void setRechargeCash(Double rechargeCash) {
         this.rechargeCash = rechargeCash;
     }
 
     @XmlElement(name = "accountId")
     @JsonProperty("accountId")
-    public Integer getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Integer accountId) {
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
 }
