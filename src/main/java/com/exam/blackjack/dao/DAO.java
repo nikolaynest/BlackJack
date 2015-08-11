@@ -13,5 +13,5 @@ public interface DAO {
 
     AvailableCashResponse recharge(RechargeRequest request);
 
-    AvailableCashResponse subtraction(BustRequest request);
+    void subtraction(BustRequest request);
 }
