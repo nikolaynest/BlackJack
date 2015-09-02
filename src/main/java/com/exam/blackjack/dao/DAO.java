@@ -1,7 +1,7 @@
 package com.exam.blackjack.dao;
 
-import com.exam.blackjack.rest.container.request.BustRequest;
 import com.exam.blackjack.rest.container.request.RechargeRequest;
+import com.exam.blackjack.rest.container.request.SubtractRequest;
 import com.exam.blackjack.rest.container.response.AccountResponse;
 import com.exam.blackjack.rest.container.response.AvailableCashResponse;
 
@@ -13,5 +13,7 @@ public interface DAO {
 
     AvailableCashResponse recharge(RechargeRequest request);
 
-    void subtraction(BustRequest request);
+    void subtraction(SubtractRequest request);
+
+    long getDealerId();
 }

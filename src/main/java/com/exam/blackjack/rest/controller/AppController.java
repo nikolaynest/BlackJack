@@ -54,7 +54,7 @@ public class AppController {
     }
 
     @RequestMapping(value = "/bust", method = POST)
-    public BustResponse bust(BustRequest request) {
+    public BustResponse bust(SubtractRequest request) {
         return manager.bust(request);
     }
 

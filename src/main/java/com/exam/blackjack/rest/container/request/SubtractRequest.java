@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created on 10.08.15.
  */
 @XmlRootElement(name = "request")
-public class BustRequest {
+public class SubtractRequest {
     private Integer moneyRate;
     private Long fromWhomId;
     private Long toWhomId;

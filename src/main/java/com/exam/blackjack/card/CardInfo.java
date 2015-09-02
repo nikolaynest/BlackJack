@@ -3,7 +3,7 @@ package com.exam.blackjack.card;
 /**
  * Created by nikolay on 26.07.15.
  */
-public class CardOwner {
+public class CardInfo {
 
 
     private Card card;
@@ -25,7 +25,7 @@ public class CardOwner {
         this.visible = visible;
     }
 
-    public CardOwner(Card card, boolean visible) {
+    public CardInfo(Card card, boolean visible) {
         this.card = card;
         this.visible = visible;
     }

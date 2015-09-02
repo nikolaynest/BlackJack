@@ -1,7 +1,7 @@
 package com.exam.blackjack.core;
 
 import com.exam.blackjack.card.Card;
-import com.exam.blackjack.card.CardOwner;
+import com.exam.blackjack.card.CardInfo;
 import com.exam.blackjack.card.Deck;
 import com.exam.blackjack.dao.DAO;
 import com.exam.blackjack.rest.container.request.*;
@@ -10,7 +10,9 @@ import com.exam.blackjack.rules.GameRules;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created on 02.08.15.
@@ -21,6 +23,10 @@ public class CoreManager {
     private GameRules rules;
     private Validator validator;
     private Deck deck;
+    private Long dealerId = null;
+    private Map<String, List<Card>> playerCache = new HashMap<>();
+    private Map<String, List<Card>> dealerCache = new HashMap<>();
+
 
 
     @Autowired
@@ -43,6 +49,12 @@ public class CoreManager {
         this.deck = deck;
     }
 
+    private long getDealerId() {
+        if (dealerId == null) {
+            dealerId = dao.getDealerId();
+        }
+        return dealerId;
+    }
 
     public AccountResponse getAccount(AccountRequest request) {
         AccountResponse account = dao.getAccount(request.getAccountId());
@@ -64,6 +76,14 @@ public class CoreManager {
         return this.recharge(rechargeRequest);
     }
 
+    private void blaskJack(int rate, long accountId) {
+        double win = rules.blackJackWinCalculation(rate);
+        RechargeRequest request = new RechargeRequest();
+        request.setAccountId(accountId);
+        request.setRechargeCash(win);
+        this.recharge(request);
+    }
+
     public ParlayResponse makeRate(ParlayRequest request) {
         Integer moneyRate = request.getMoneyRate();
         Long accountId = request.getAccountId();
@@ -71,26 +91,53 @@ public class CoreManager {
         validator.parlayValidate(moneyRate, availableCash);
 
         ParlayResponse response = new ParlayResponse();
-        List<CardOwner> playerCards = new ArrayList<>();
-        List<CardOwner> dillerCards = new ArrayList<>();
+        List<CardInfo> playerCards = new ArrayList<>();
+        List<CardInfo> dealerCards = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             if (i % 2 == 0) { //1 и 3 карты - для игрока
                 Card card = deck.card();
-                CardOwner playerCard = new CardOwner(card, true);
+                CardInfo playerCard = new CardInfo(card, true);
                 playerCards.add(playerCard);
             } else { // 2 и 4 - для дилера
                 Card card = deck.card();
-                CardOwner dillerCard;
+                CardInfo dealerCard;
                 if (i != 3) {
-                    dillerCard = new CardOwner(card, true);
+                    dealerCard = new CardInfo(card, true);
                 } else {
-                    dillerCard = new CardOwner(card, false);
+                    dealerCard = new CardInfo(card, false);
                 }
-                dillerCards.add(dillerCard);
+                dealerCards.add(dealerCard);
 
             }
         }
-        response.setDillerCards(dillerCards);
+
+        if (rules.isBlackJack(playerCards.get(0).getCard(), playerCards.get(1).getCard())) {
+            if (rules.isBlackJack(dealerCards.get(0).getCard(), dealerCards.get(1).getCard())) {
+                response.setIsPush(true);
+            } else {
+                response.setIsPush(false);
+                response.setIsBlackJack(true);
+                response.setWinnerId(request.getAccountId());
+                blaskJack(request.getMoneyRate(), request.getAccountId());
+            }
+        } else {
+            if (rules.isBlackJack(dealerCards.get(0).getCard(), dealerCards.get(1).getCard())){
+                response.setIsBlackJack(true);
+                response.setIsPush(false);
+                response.setWinnerId(this.getDealerId());
+
+                SubtractRequest subtractRequest = new SubtractRequest();
+                subtractRequest.setFromWhomId(request.getAccountId());
+                subtractRequest.setToWhomId(this.getDealerId());
+                subtractRequest.setMoneyRate(request.getMoneyRate());
+                dao.subtraction(subtractRequest);
+            } else {
+                response.setIsPush(false);
+                response.setIsBlackJack(false);
+                response.setWinnerId(null);
+            }
+        }
+        response.setDealerCards(dealerCards);
         response.setPlayerCards(playerCards);
         return response;
     }
@@ -102,7 +149,9 @@ public class CoreManager {
         return response;
     }
 
-    public BustResponse bust(BustRequest request) {
+
+
+    public BustResponse bust(SubtractRequest request) {
         Integer moneyRate = request.getMoneyRate();
         Long fromWhomId = request.getFromWhomId();
         Long toWhomId = request.getToWhomId();

@@ -1,7 +1,7 @@
 package com.exam.blackjack.dao;
 
-import com.exam.blackjack.rest.container.request.BustRequest;
 import com.exam.blackjack.rest.container.request.RechargeRequest;
+import com.exam.blackjack.rest.container.request.SubtractRequest;
 import com.exam.blackjack.rest.container.response.AccountResponse;
 import com.exam.blackjack.rest.container.response.AvailableCashResponse;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class DaoSpringJdbc implements DAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void subtraction(BustRequest request) {
+    public void subtraction(SubtractRequest request) {
         Integer moneyRate = request.getMoneyRate();
         Long fromWhomId = request.getFromWhomId();
         Long toWhomId = request.getToWhomId();
@@ -60,6 +60,13 @@ public class DaoSpringJdbc implements DAO {
         log.info("add to id:[{}] cash:[{}], change [{}] row", toWhomId, moneyRate, row);
 
         this.recordOperation(moneyRate, fromWhomId, SUBTRACTION_OPERATION_NUMBER);
+    }
+
+
+
+    @Override
+    public long getDealerId() {
+        return jdbcTemplate.queryForObject("SELECT account_id FROM account WHERE name='dealer'", Long.class);
     }
 
     private void rechargeAccount(double cash, long accountId) {
