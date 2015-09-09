@@ -43,10 +43,10 @@ public class AppController {
         return manager.makeRate(request);
     }
 
-    @RequestMapping(value = "/blackjack", method = POST)
-    public AvailableCashResponse blackJack(BlackJackRequest request) {
-        return manager.blackJack(request);
-    }
+//    @RequestMapping(value = "/blackjack", method = POST)
+//    public AvailableCashResponse blackJack(BlackJackRequest request) {
+//        return manager.blackJack(request);
+//    }
 
     @RequestMapping(value = "/hit", method = POST)
     public HitResponse hit(HitRequest request) {

@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created on 10.08.15.
  */
 @XmlRootElement(name = "request")
-public class HitRequest {
+public class HitRequest extends SessionRequest {
 
     private Long accountId;
 

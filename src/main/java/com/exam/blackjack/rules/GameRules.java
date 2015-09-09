@@ -37,7 +37,7 @@ public class GameRules {
                 values += aceNumb;
             }
         } else if (aceNumb > 0) {
-            values += aceNumb * 10 + aceNumb;
+            values += 11 + aceNumb - 1;
         }
         return values;
     }

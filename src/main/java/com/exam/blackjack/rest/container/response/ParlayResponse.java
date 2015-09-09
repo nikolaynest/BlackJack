@@ -16,7 +16,7 @@ import java.util.List;
 @XmlRootElement(name = "response")
 @XmlType(propOrder = {"blackJack", "push", "winnerId", "playerCards", "dealerCards"})
 @JsonPropertyOrder({"isBlackJack", "isPush", "winnerId", "playerCards", "dealerCards"})
-public class ParlayResponse {
+public class ParlayResponse extends SessionResponse {
     private List<CardInfo> playerCards;
     private List<CardInfo> dealerCards;
     private boolean isBlackJack;

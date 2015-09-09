@@ -3,6 +3,7 @@ package com.exam.blackjack.core;
 import com.exam.blackjack.card.Card;
 import com.exam.blackjack.card.CardInfo;
 import com.exam.blackjack.card.Deck;
+import com.exam.blackjack.card.Rank;
 import com.exam.blackjack.dao.DAO;
 import com.exam.blackjack.rest.container.request.*;
 import com.exam.blackjack.rest.container.response.*;
@@ -10,9 +11,7 @@ import com.exam.blackjack.rules.GameRules;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created on 02.08.15.
@@ -24,9 +23,8 @@ public class CoreManager {
     private Validator validator;
     private Deck deck;
     private Long dealerId = null;
-    private Map<String, List<Card>> playerCache = new HashMap<>();
-    private Map<String, List<Card>> dealerCache = new HashMap<>();
-
+    private SessionManager sessionManager;
+    private Cache cache;
 
 
     @Autowired
@@ -49,6 +47,16 @@ public class CoreManager {
         this.deck = deck;
     }
 
+    @Autowired
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
+
+    @Autowired
+    public void setCache(Cache cache) {
+        this.cache = cache;
+    }
+
     private long getDealerId() {
         if (dealerId == null) {
             dealerId = dao.getDealerId();
@@ -65,18 +73,18 @@ public class CoreManager {
         return dao.recharge(request);
     }
 
-    public AvailableCashResponse blackJack(BlackJackRequest request) {
-        int rate = request.getMoneyRate();
-        long accountId = request.getAccountId();
-        double win = rules.blackJackWinCalculation(rate);
+//    public AvailableCashResponse blackJack(BlackJackRequest request) {
+//        int rate = request.getMoneyRate();
+//        long accountId = request.getAccountId();
+//        double win = rules.blackJackWinCalculation(rate);
+//
+//        RechargeRequest rechargeRequest = new RechargeRequest();
+//        rechargeRequest.setAccountId(accountId);
+//        rechargeRequest.setRechargeCash(win);
+//        return this.recharge(rechargeRequest);
+//    }
 
-        RechargeRequest rechargeRequest = new RechargeRequest();
-        rechargeRequest.setAccountId(accountId);
-        rechargeRequest.setRechargeCash(win);
-        return this.recharge(rechargeRequest);
-    }
-
-    private void blaskJack(int rate, long accountId) {
+    private void blackJackMoneyReward(int rate, long accountId) {
         double win = rules.blackJackWinCalculation(rate);
         RechargeRequest request = new RechargeRequest();
         request.setAccountId(accountId);
@@ -89,6 +97,8 @@ public class CoreManager {
         Long accountId = request.getAccountId();
         double availableCash = dao.getAccount(accountId).getCash();
         validator.parlayValidate(moneyRate, availableCash);
+        String session = sessionManager.getSession();
+
 
         ParlayResponse response = new ParlayResponse();
         List<CardInfo> playerCards = new ArrayList<>();
@@ -111,17 +121,22 @@ public class CoreManager {
             }
         }
 
-        if (rules.isBlackJack(playerCards.get(0).getCard(), playerCards.get(1).getCard())) {
-            if (rules.isBlackJack(dealerCards.get(0).getCard(), dealerCards.get(1).getCard())) {
+        Card dealerCard_1 = dealerCards.get(0).getCard();
+        Card dealerCard_2 = dealerCards.get(1).getCard();
+        Card playerCard_1 = playerCards.get(0).getCard();
+        Card playerCard_2 = playerCards.get(1).getCard();
+
+        if (rules.isBlackJack(playerCard_1, playerCard_2)) {
+            if (rules.isBlackJack(dealerCard_1, dealerCard_2)) {
                 response.setIsPush(true);
             } else {
                 response.setIsPush(false);
                 response.setIsBlackJack(true);
                 response.setWinnerId(request.getAccountId());
-                blaskJack(request.getMoneyRate(), request.getAccountId());
+                this.blackJackMoneyReward(request.getMoneyRate(), request.getAccountId());
             }
         } else {
-            if (rules.isBlackJack(dealerCards.get(0).getCard(), dealerCards.get(1).getCard())){
+            if (rules.isBlackJack(dealerCard_1, dealerCard_2)) {
                 response.setIsBlackJack(true);
                 response.setIsPush(false);
                 response.setWinnerId(this.getDealerId());
@@ -135,20 +150,44 @@ public class CoreManager {
                 response.setIsPush(false);
                 response.setIsBlackJack(false);
                 response.setWinnerId(null);
+
+                cache.addDealerCards(session, (Card[]) dealerCards.toArray());
+                cache.addPlayerCards(session, (Card[]) playerCards.toArray());
             }
         }
         response.setDealerCards(dealerCards);
         response.setPlayerCards(playerCards);
+        response.setSession(session);
         return response;
     }
 
     public HitResponse hit(HitRequest request) {
+        String session = request.getSession();
+//        Map<String, List<Card>> playerMap = cache.getPlayerMap();
+//        Map<String, List<Card>> dealerMap = cache.getDealerMap();
+//        List<Card> playerCards = playerMap.get(session);
+//        List<Card> dealerCards = dealerMap.get(session);
+
+        Card newCard = deck.card();
+        if (request.getAccountId() != dealerId) {
+            cache.addPlayerCards(session, newCard);
+        }
+        //todo: правила для хит, реализовать логику
+        List<Card> playerCurrentCards = cache.getPlayerMap().get(session);
+        int aceNumbers = 0;
+        int values = 0;
+        for (Card card : playerCurrentCards) {
+            if (card.getRank() == Rank.ACE) {
+                aceNumbers++;
+            }
+            values += card.getValue();
+        }
+
         HitResponse response = new HitResponse();
         response.setAccountId(request.getAccountId());
-        response.setCard(deck.card());
+        response.setCard(newCard);
         return response;
     }
-
 
 
     public BustResponse bust(SubtractRequest request) {
@@ -159,5 +198,6 @@ public class CoreManager {
 
         return null;
     }
+
 
 }

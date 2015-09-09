@@ -1,9 +1,7 @@
 package com.exam.blackjack.config;
 
 import com.exam.blackjack.card.Deck;
-import com.exam.blackjack.core.CoreManager;
-import com.exam.blackjack.core.Validator;
-import com.exam.blackjack.core.ValidatorImpl;
+import com.exam.blackjack.core.*;
 import com.exam.blackjack.deck.DeckOperations;
 import com.exam.blackjack.rest.controller.AppController;
 import com.exam.blackjack.rules.GameRules;
@@ -49,4 +47,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return new Deck();
     }
 
+    @Bean
+    public SessionManager sessionManager() {
+        return new SessionManagerImpl();
+    }
+
+    @Bean
+    public Cache cache() {
+        return new CardsCache();
+    }
 }

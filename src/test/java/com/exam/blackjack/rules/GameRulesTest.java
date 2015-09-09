@@ -48,4 +48,61 @@ public class GameRulesTest {
         boolean isBlackJack = rules.isBlackJack(a, b);
         assertTrue(isBlackJack);
     }
+
+    @Test
+    public void testGetValuesSimple() {
+        Card a = new Card(Suit.CLUBS, Rank.TWO, 2);
+        Card b = new Card(Suit.CLUBS, Rank.NINE, 9);
+        Card c = new Card(Suit.CLUBS, Rank.KING, 10);
+        int values = rules.getValues(new Card[]{a, b, c});
+        assertEquals(21, values);
+    }
+
+    @Test
+    public void testGetValuesWithAceAsOne() {
+        Card a = new Card(Suit.CLUBS, Rank.TEN, 10);
+        Card b = new Card(Suit.CLUBS, Rank.KING, 10);
+        Card c = new Card(Suit.CLUBS, Rank.ACE, 1);
+        int values = rules.getValues(new Card[]{a, b, c});
+        assertEquals(21, values);
+    }
+
+    @Test
+    public void testGetValuesWithAceAsEleven() {
+        Card a = new Card(Suit.CLUBS, Rank.SEVEN, 7);
+        Card b = new Card(Suit.CLUBS, Rank.THREE, 3);
+        Card c = new Card(Suit.CLUBS, Rank.ACE, 1);
+        int values = rules.getValues(new Card[]{a, b, c});
+        assertEquals(21, values);
+    }
+
+    @Test
+    public void testGetValuesWithAceWhenLessTen() {
+        Card a = new Card(Suit.CLUBS, Rank.SEVEN, 6);
+        Card b = new Card(Suit.CLUBS, Rank.THREE, 3);
+        Card c = new Card(Suit.CLUBS, Rank.ACE, 1);
+        int values = rules.getValues(new Card[]{a, b, c});
+        assertEquals(20, values);
+    }
+
+    @Test
+    public void testGetValuesTwoAces() {
+        Card a = new Card(Suit.HEARTS, Rank.ACE, 1);
+        Card b = new Card(Suit.CLUBS, Rank.ACE, 1);
+        int values = rules.getValues(new Card[]{a, b});
+        assertEquals(12, values);
+    }
+
+    @Test
+    public void testGetValuesTreeAndFourAces() {
+        Card a = new Card(Suit.HEARTS, Rank.ACE, 1);
+        Card b = new Card(Suit.CLUBS, Rank.ACE, 1);
+        Card c = new Card(Suit.DIAMONDS, Rank.ACE, 1);
+        Card d = new Card(Suit.SPADES, Rank.ACE, 1);
+
+        int values = rules.getValues(new Card[]{a, b, c});
+        assertEquals(13, values);
+        values = rules.getValues(new Card[]{a,b,c,d});
+        assertEquals(14, values);
+    }
 }

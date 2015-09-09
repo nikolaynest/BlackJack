@@ -10,10 +10,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created on 10.08.15.
  */
 @XmlRootElement(name = "response")
-public class HitResponse {
+public class HitResponse extends SessionResponse {
 
     private Long accountId;
     private Card card;
+    private boolean isBust;
 
     @XmlElement(name = "accountId")
     @JsonProperty("accountId")
@@ -33,5 +34,15 @@ public class HitResponse {
 
     public void setCard(Card card) {
         this.card = card;
+    }
+
+    @XmlElement(name = "isBust")
+    @JsonProperty("isBust")
+    public boolean isBust() {
+        return isBust;
+    }
+
+    public void setIsBust(boolean isBust) {
+        this.isBust = isBust;
     }
 }
