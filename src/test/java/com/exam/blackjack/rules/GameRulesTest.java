@@ -102,7 +102,7 @@ public class GameRulesTest {
 
         int values = rules.getValues(new Card[]{a, b, c});
         assertEquals(13, values);
-        values = rules.getValues(new Card[]{a,b,c,d});
+        values = rules.getValues(new Card[]{a, b, c, d});
         assertEquals(14, values);
     }
 }

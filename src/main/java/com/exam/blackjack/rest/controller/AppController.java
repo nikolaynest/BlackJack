@@ -43,19 +43,14 @@ public class AppController {
         return manager.makeRate(request);
     }
 
-//    @RequestMapping(value = "/blackjack", method = POST)
-//    public AvailableCashResponse blackJack(BlackJackRequest request) {
-//        return manager.blackJack(request);
-//    }
-
     @RequestMapping(value = "/hit", method = POST)
     public HitResponse hit(HitRequest request) {
         return manager.hit(request);
     }
 
-    @RequestMapping(value = "/bust", method = POST)
-    public BustResponse bust(SubtractRequest request) {
-        return manager.bust(request);
+    @RequestMapping(value = "/stand", method = POST)
+    public StandResponse stand(StandRequest request) {
+        return manager.stand(request);
     }
 
 }

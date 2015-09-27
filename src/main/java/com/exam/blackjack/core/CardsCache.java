@@ -5,36 +5,46 @@ import com.exam.blackjack.card.Card;
 import java.util.*;
 
 /**
- * Created by nikolay on 20.08.15.
+ * Created on 20.08.15.
  */
 public class CardsCache implements Cache {
 
-    private Map<String, List<Card>> playerCards = new HashMap<>();
-    private Map<String, List<Card>> dealerCards = new HashMap<>();
+    private Map<String, List<Card>> playerCardsMap = new HashMap<>();
+    private Map<String, List<Card>> dealerCardsMap = new HashMap<>();
+    private Map<String, Integer> rate = new HashMap<>();
 
     @Override
-    public Map<String, List<Card>> getPlayerMap() {
-        return playerCards;
+    public void setMoneyRate(String session, Integer moneyRate) {
+        rate.put(session, moneyRate);
     }
 
     @Override
-    public Map<String, List<Card>> getDealerMap() {
-        return dealerCards;
+    public Integer getMoneyRate(String session) {
+        return rate.get(session);
+    }
+
+    public List<Card> getPlayerCards(String session) {
+        return playerCardsMap.get(session);
+    }
+
+    public List<Card> getDealerCards(String session) {
+        return dealerCardsMap.get(session);
     }
 
     @Override
     public void addPlayerCards(String session, Card... cardsToAdd) {
-        this.add(playerCards, session, cardsToAdd);
+        this.add(playerCardsMap, session, cardsToAdd);
     }
 
     @Override
     public void addDealerCards(String session, Card... cardsToAdd) {
-        this.add(dealerCards, session, cardsToAdd);
+        this.add(dealerCardsMap, session, cardsToAdd);
     }
 
     public void deleteSessionInfo(String session) {
-        this.remove(session, dealerCards);
-        this.remove(session, playerCards);
+        this.remove(session, dealerCardsMap);
+        this.remove(session, playerCardsMap);
+        this.rate.remove(session);
     }
 
     private void add(Map<String, List<Card>> map, String session, Card... cardsToAdd) {

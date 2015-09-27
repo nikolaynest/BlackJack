@@ -15,7 +15,7 @@ public class TransactionalAspect {
 
     private static final Logger log = LoggerFactory.getLogger(TransactionalAspect.class);
 
-    @AfterThrowing(pointcut = "execution(* com.exam.blackjack.core.CoreManager.*(..))", throwing = "e")
+    @AfterThrowing(pointcut = "execution(* com.exam.blackjack.core.CoreManagerImpl.*(..))", throwing = "e")
     public void rollback(SQLException e) {
         log.debug("Exception during db operation: [{}]", e.toString());
         throw new RuntimeException(e);

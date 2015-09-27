@@ -28,8 +28,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public CoreManager coreManager() {
-        return new CoreManager();
+    public CoreManagerImpl coreManager() {
+        return new CoreManagerImpl();
     }
 
     @Bean
